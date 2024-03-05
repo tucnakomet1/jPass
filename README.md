@@ -47,7 +47,7 @@ The whole program was written in the IDE [IntelliJ IDEA v2023.1.4](https://www.j
 ### Download jar file from releases
 
 The release is at [this](https://github.com/tucnakomet1/jPass/releases/tag/v0.0.1) link. Or it can be downloaded with the following command:
->  `wget https://github.com/tucnakomet1/jPass/releases/download//releases/download/jpass_v0.0.1.tar.gz`
+>  `wget https://github.com/tucnakomet1/jPass/releases/download/v0.0.1/jpass_v0.0.1.tar.gz`
 
 ```bash
 tar -xvzf jpass_v0.0.1.tar.gz
