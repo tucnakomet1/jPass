@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>JPass</title>
+	
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+	<meta name="author" content="Karel Velička">
+</head>
+<body>
+	<h1>JPass</h1>
+
+	<p>A simple password manager written in Java 21 as a credit program in the course <a href="https://d3s.mff.cuni.cz/teaching/nprg013/">NPRG013</a> at <a href="https://www.mff.cuni.cz/">MFF UK</a>.</p>
+	
+	<h2>Used packages</h2>
+	<ul>
+		<li><strong><a href="https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on">Bouncy Castle</a></strong> - library implementing Argon2</li>
+		<li><strong><a href="https://mvnrepository.com/artifact/org.json/json">JSON In Java</a></strong> - library for working with <code>.json</code> files</li>
+		<li><strong><a href="https://mvnrepository.com/artifact/com.github.kwhat/jnativehook">JNativeHook</a></strong> - library containing keyboard listeners</li>
+	</ul>
+
+	<h2 id="implementation">Implementation</h2>
+
+	<ol>
+		<li>After running <code>jpass</code>, the <em>config</em> file with all its parameters is first loaded and stored in variables. (using class <code><a href="org/jpass/utils/LoadConfig.html">LoadConfig</a></code>)<br>
+		<em>If the config file does not exist, the program prompts the user to create it.</em></li>
+
+		<li>The user has to enter a password (first the hash is verified) and then this password is used to decrypt the password file</li>
+
+		<li>The password file is decrypted into memory (<code>byte[] data</code>) and kept there until the program is terminated. Any changes to the database work with this <code>data</code>. It is therefore important to terminate the program properly, otherwise data will be lost (if the database has been modified in any way).</li>
+	</ol>
+
+	<h3 id="passwords">Passwords</h3>
+	<ul>
+		<li><strong>Common passwords</strong> - When a password is entered, it is verified that the password entered is not one of the TOP  10000 most common passwords of 2017. This <a href="https://github.com/tests-always-included/password-strength/blob/master/data/common-passwords.txt">wordlist</a> is browsed using class <code><a href="org/jpass/crypt/checkForCommonPassword.html">checkForCommonPassword</a></code>.
+			<ul>
+				<li>The  <a href="https://www.wikiwand.com/en/Levenshtein_distance">Levenshtein distance</a> of the password is also checked using class <code><a href="org/jpass/crypt/WordSimilarity.html">WordSimilarity</a></code>. If it is less than 4 and a match occurs, the password is again considered very weak and the user is notified.</li>
+			</ul>
+		</li>
+		<li><strong>Entropy</strong> - for each entered password, its <a href="https://www.wikiwand.com/en/Entropy_(information_theory)">entropy</a> is calculated in bits using class <code><a href="org/jpass/crypt/PasswordEntropy.html">PasswordEntropy</a></code>. I was inspired by <a href="http://tests-always-included.github.io/password-strength/">this</a> generator. At the same time, the entropy status is reported to the user - whether the password is weak/strong (based on the number of bits).</li>
+	</ul>
+
+	<h3 id="encrypting-and-decrypting-a-password-file">Encrypting and decrypting a password file</h3>
+
+	<ul>
+		<li>Decryption/ encryption is done by AES-256. The whole process runs in the class <code><a href="org/jpass/crypt/dbEncryptionAES.html">dbEncryptionAES</a></code>.</li>
+		<li><strong>Decryption</strong> - The existence of encrypted password file <code>name.pass</code> is required. The user enters a password and then verifies (the hashes must match the <code>.secret</code> file). The database is then decrypted and loaded byte by byte into <code>byte[] data</code> memory. <em>(Then this <code>data</code> is converted to JSON format...) .</em></li>
+		<li><strong>Encryption</strong> - <code>byte[] data</code> is encrypted into the file <code>name.pass</code>.</li>
+	</ul>
+
+	<h2>Most important classes</h2>
+	<ul>
+		<li><code><a href="org/jpass/Main.html">Main</a></code> - entry point of the application.</li>
+		<li><code><a href="org/jpass/ConfigInit.html">ConfigInit</a></code> - initialize path to config file and check for existing config If config file doesn't exist, create it (also create version file, move wordlist into config directory and create secret file)</li>
+		<li><code><a href="org/jpass/ParseArgs.html">ParseArgs</a></code> - parse all command line arguments and calls the corresponding function.</li>
+		<li><code><a href="org/jpass/crypt/dbEncryptionAES.html">dbEncryptionAES</a></code> - encrypt and decrypt the password file (AES-256). The data is stored in <code><a href="org/jpass/utils/ConfigGetter.html">byte[] ConfigGetter.data</a></code>.</li>
+		<li><code><a href="org/jpass/crypt/passEncryptionArgon2.html">passEncryptionArgon2</a></code> - encrypt entered password using Argon2d algorithm (password for <code>.pass</code> file)</li>
+		<li><code><a href="org/jpass/database/JsonReader.html">JsonReader</a></code> - read data from password database (database in JSON)- usernames, passwords, etc.</li>
+		<li><code><a href="org/jpass/database/JsonWriter.html">JsonWriter</a></code> - write to password database  in JSON </li>
+	</ul>
+</body>
+</html>  
