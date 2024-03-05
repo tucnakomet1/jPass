@@ -1,4 +1,4 @@
-*English version [here](README_en.md).*
+*English version [here](README.md).*
 
 # Jpass
 
@@ -46,7 +46,7 @@ Celý program byl napsán v IDE [IntelliJ IDEA v2023.1.4](https://www.jetbrains.
 ### Stažení jar souboru z releases
 
 Vydání je na [tomto](https://github.com/tucnakomet1/jPass/releases/tag/v0.0.1) odkazu. Nebo lze stáhnout následujícím příkazem:
->  `wget https://github.com/tucnakomet1/jPass/releases/download//releases/download/jpass_v0.0.1.tar.gz`
+>  `wget https://github.com/tucnakomet1/jPass/releases/download/v0.0.1/jpass_v0.0.1.tar.gz`
 
 ```bash
 tar -xvzf jpass_v0.0.1.tar.gz
